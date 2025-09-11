@@ -6,3 +6,4 @@
 ### 프로젝트 범위
 데이터 수집, 데이터 저장, 데이터 가공, 데이터 분석, 데이터 시각화, 분석 결과
 ### 생성형 AI 결과
+<img width="386" height="535" alt="Image" src="https://github.com/user-attachments/assets/cf7b1ea4-6743-45c1-8607-73890f037cc1" />
