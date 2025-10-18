@@ -1,4 +1,4 @@
-
+# 1980 - 2016년 데이터
 # 플랫폼별 지역 매출 분석 + 지역별 최고 플랫폼
 
 import pandas as pd
@@ -24,7 +24,7 @@ region_sales.plot(
     width=0.8,
 )
 
-plt.title("💰 Platform-wise Total Sales by Region", fontsize=14)
+plt.title("Platform-wise Total Sales by Region", fontsize=14)
 plt.xlabel("Platform")
 plt.ylabel("Total Videogame Sales (in millions)")
 plt.legend(["NA", "EU", "JP", "Other"], title="Region")
@@ -32,9 +32,7 @@ plt.tight_layout()
 plt.grid(True, axis="y", linestyle="--", alpha=0.7)
 plt.show()
 
-# ----------------------------------------
-# 🎯 (2) 각 지역별 최고 매출 플랫폼
-# ----------------------------------------
+# 각 지역별 최고 매출 플랫폼
 best_platforms = {}
 for region in ["NA_Sales", "EU_Sales", "JP_Sales", "Other_Sales"]:
     best = region_sales[region].idxmax()
@@ -55,7 +53,7 @@ sns.barplot(
     palette="tab10"
 )
 
-plt.title("🌍 Region-wise Best-Selling Platform", fontsize=14)
+plt.title("Region-wise Best-Selling Platform", fontsize=14)
 plt.xlabel("Region")
 plt.ylabel("Total Sales (in millions)")
 plt.legend(title="Platform", loc="upper right")
