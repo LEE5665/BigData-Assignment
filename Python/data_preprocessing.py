@@ -1,41 +1,25 @@
 import pandas as pd
-import glob
 import os
 
-input_folder = "./datasets/rawg_by_year"
+input_path = "./data_preprocessing/rawg_cleaned.csv"
 output_folder = "./data_preprocessing"
 os.makedirs(output_folder, exist_ok=True)
 
-files = sorted(glob.glob(os.path.join(input_folder, "rawg_*.csv")))
+df = pd.read_csv(input_path, low_memory=False)
 
-all_data = []
-for file in files:
-    df = pd.read_csv(file, low_memory=False)
-    keep_cols = [
-        "name", "released", "rating", "metacritic", "genres",
-        "platforms", "stores", "added_by_status.owned",
-        "added", "playtime"
-    ]
-    df = df[[col for col in keep_cols if col in df.columns]]
+# 필요한 컬럼만 남기기
+keep_cols = ["name", "year", "rating", "metacritic"]
+df = df[[col for col in keep_cols if col in df.columns]].copy()
 
-    # 결측치 제거 & 중복 제거
-    df = df.drop_duplicates(subset=["name"])
-    df = df.dropna(subset=["name", "released"])
+# 타깃 결측 제거 (Metacritic 점수가 없는 게임은 제거)
+df = df.dropna(subset=["metacritic", "rating"])
 
-    # 연도 추가
-    df["year"] = pd.to_datetime(df["released"], errors="coerce").dt.year
-
-    all_data.append(df)
-
-# 전체 병합
-merged = pd.concat(all_data, ignore_index=True)
-
-# 불필요하게 문자열 리스트형 데이터 문자열화
-for col in ["genres", "platforms", "stores"]:
-    merged[col] = merged[col].astype(str).str.replace(r"[\[\]\{\}']", "", regex=True)
+# 점수 범위 이상치 제거
+df = df[(df["rating"] > 0) & (df["rating"] <= 5)]
+df = df[(df["metacritic"] > 20) & (df["metacritic"] <= 100)]
 
 # 저장
-output_path = os.path.join(output_folder, "rawg_cleaned.csv")
-merged.to_csv(output_path, index=False, encoding="utf-8-sig")
+output_path = os.path.join(output_folder, "rawg_user_vs_meta.csv")
+df.to_csv(output_path, index=False, encoding="utf-8-sig")
 
-print(f"RAWG 데이터 전처리 완료: {merged.shape[0]}개 게임 저장됨")
+print(f"전처리 완료: {df.shape[0]}개 게임 (유저평점 기반 예측용 데이터)")
