@@ -1,4 +1,96 @@
-# 프로젝트 계획
+# 프로젝트 계획1
+### 분석 할 내용
+* 게임 리뷰 평점에 따른 메타크리틱 점수 예측
+  
+### 사용 한 데이터
+> https://api.rawg.io/api/games API 사용해서 2000-2024년 게임 데이터 모두 추출
+
+### 프로젝트 범위
+**[데이터 수집]**
+  - rawg_2000.csv ~ rawg_2024.csv
+<details>
+  <summary>데이터 가공, 분석 결과</summary>
+  
+```
+df = pd.read_csv(input_path, low_memory=False)
+
+# 필요한 컬럼만 남기기
+keep_cols = ["name", "year", "rating", "metacritic"]
+df = df[[col for col in keep_cols if col in df.columns]].copy()
+
+# 타깃 결측 제거 (Metacritic 점수가 없는 게임은 제거)
+df = df.dropna(subset=["metacritic", "rating"])
+
+# 점수 범위 이상치 제거
+df = df[(df["rating"] > 0) & (df["rating"] <= 5)]
+df = df[(df["metacritic"] > 20) & (df["metacritic"] <= 100)]
+
+# 저장
+output_path = os.path.join(output_folder, "rawg_user_vs_meta.csv")
+df.to_csv(output_path, index=False, encoding="utf-8-sig")
+```
+  
+</details>
+
+**[데이터 시각화]**
+  
+<details>
+  <summary>평점, 메타크래틱을 활용한 회귀 예측</summary>
+
+```
+# 학습
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# 예측, 성능 평가
+y_pred = model.predict(X_test)
+
+mae = mean_absolute_error(y_test, y_pred)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+
+print(f"MAE: {mae:.2f}")
+print(f"RMSE: {rmse:.2f}")
+print(f"\n회귀식: Metacritic = {model.coef_[0]:.2f} * Rating + {model.intercept_:.2f}")
+
+font_path = "C:/Windows/Fonts/malgun.ttf"
+font_name = font_manager.FontProperties(fname=font_path).get_name()
+matplotlib.rcParams['font.family'] = font_name
+matplotlib.rcParams['axes.unicode_minus'] = False
+
+# 시각화
+plt.figure(figsize=(8, 6))
+plt.scatter(X_test, y_test, alpha=0.5, label="실제 값")
+plt.plot(X_test, y_pred, color="red", label="예측 회귀선")
+plt.xlabel("유저 평점 (rating)")
+plt.ylabel("Metacritic 점수")
+plt.title(f"유저 평점 → Metacritic 점수 예측")
+plt.legend()
+```
+  
+</details>
+
+### 시각화
+<img width="795" height="631" alt="image" src="https://github.com/user-attachments/assets/e962bec7-d627-420a-ad3b-c8895dd78012" />
+
+
+
+### 결과
+- 모델 평가
+  - MAE: 6.79
+  - RMSE: 8.87
+- 평점 3점 시 AI 예측 결과 : 60점, 모델 예측 결과 : 68점
+
+<details>
+  <summary>생성형 AI 결과</summary>
+  <img width="769" height="253" alt="image" src="https://github.com/user-attachments/assets/2fb37677-1d06-48ec-b917-545df99be778" />
+</details>
+
+---
+---
+---
+
+# 프로젝트 계획2
 ### 분석 할 내용
 * 지역별 콘솔 매출 분석
   
@@ -6,9 +98,9 @@
 > [1980~2024 나라별 콘솔 게임 매출 - vgsales.csv](https://www.kaggle.com/datasets/asaniczka/video-game-sales-2024/data)
 
 ### 프로젝트 범위
-- 데이터 수집
-  - vgsales.csv
-- 데이터 가공, 분석 결과
+**[데이터 수집]**
+- vgsales.csv
+**[데이터 가공, 분석 결과]**
 ```
 # 결측치 제거 및 필요 컬럼 선택
 df = df.dropna(subset=["Platform", "NA_Sales", "EU_Sales", "JP_Sales", "Other_Sales"])
@@ -17,7 +109,7 @@ df = df[["Platform", "NA_Sales", "EU_Sales", "JP_Sales", "Other_Sales"]]
 # 플랫폼별 지역 매출 합계
 region_sales = df.groupby("Platform")[["NA_Sales", "EU_Sales", "JP_Sales", "Other_Sales"]].sum()
 ```
-- 데이터 시각화
+**[데이터 시각화]**
 <details>
   <summary>플랫폼별 지역 매출 누적 그래프 & 각 지역별 최고 매출 플랫폼</summary>
   
