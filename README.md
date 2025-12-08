@@ -73,7 +73,7 @@ for year in range(START_YEAR, END_YEAR + 1):
 
 ```
 ## 2. 연도별 데이터 JOSN 평탄화 및 필요한 데이터만 추출 후 CSV 로 저장
-**분석에 필요한 데이터 제외**<br>
+**분석에 필요없는 데이터 제외**<br>
 id : 게임id / slug/name : 게임 이름 / released : 게임 출시일 / year : 분석용으로 released에서 가져온 출시년도<br>
 playtime : 게임 플레이 평균 시간 / rating : 게임 평점 / ratings_count : 리뷰 개수 / metacritic : 메타크리틱 점수<br>
 platforms : 출시 플랫폼 / stores : 출시한 상점 목록 / genres/tags : 장르 분류 / esrb_rating : 게임 등급 분류
